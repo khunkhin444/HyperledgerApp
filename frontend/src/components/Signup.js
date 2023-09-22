@@ -20,7 +20,7 @@ function Signup() {
         
         if (data.success) {
             setMessage("Signup successful!");
-            // Redirect or do other tasks after successful signup if needed
+            // Redirect or other tasks after successful signup
         } else {
             setMessage(data.message || "Signup failed.");
         }

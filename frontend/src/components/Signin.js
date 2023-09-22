@@ -4,25 +4,33 @@ function Signin() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleSignin = async (e) => {
         e.preventDefault();
+        setLoading(true);
 
-        const response = await fetch("/api/signin", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ username, password })
-        });
+        try {
+            const response = await fetch("/api/signin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password })
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (data.success) {
-            setMessage("Signin successful!");
-            // Potentially set the user token here or redirect to another page
-        } else {
-            setMessage(data.message || "Signin failed.");
+            if (response.ok) {
+                setMessage("Signin successful!");
+                // Potentially set the user token here or redirect to another page
+            } else {
+                setMessage(data.message || "Signin failed.");
+            }
+        } catch (error) {
+            setMessage("Network error or server is down.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -30,6 +38,7 @@ function Signin() {
         <section>
             <h2>Signin</h2>
             {message && <p>{message}</p>}
+            {loading && <p>Loading...</p>}
             <form onSubmit={handleSignin}>
                 <div className="input-group">
                     <label htmlFor="username">Username</label>
@@ -51,7 +60,7 @@ function Signin() {
                         required 
                     />
                 </div>
-                <button type="submit">Signin</button>
+                <button type="submit" disabled={loading}>Signin</button>
             </form>
         </section>
     );

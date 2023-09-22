@@ -3,6 +3,20 @@ const app = express();
 const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/files');
 const mydatabase = require('./db');  // Importing the CouchDB database instance
+const { Gateway, Wallets } = require('fabric-network');
+const fs = require('fs'); // Node.js file system module
+
+async function initializeFabricGateway() {
+    const wallet = await Wallets.newFileSystemWallet('./wallet');
+    const gateway = new Gateway();
+
+    const connectionProfileJson = fs.readFileSync('./connection-profile.json', 'utf8');
+    const connectionProfile = JSON.parse(connectionProfileJson);
+
+    await gateway.connect(connectionProfile, { wallet, identity: 'userId' });
+    
+    return { gateway, wallet };
+}
 
 app.use(express.json());  // Middleware for JSON body parsing
 
@@ -23,3 +37,4 @@ const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
