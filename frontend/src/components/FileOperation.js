@@ -5,9 +5,37 @@ function FileOperation() {
     const [message, setMessage] = useState("");
 
     const handleFileDownload = async () => {
-        // Logic for downloading a file
-        // This might vary based on your backend structure
+        try {
+            const response = await fetch("http://localhost:3001/files/downloadFile");
+    
+            // Check if the request was successful
+            if (!response.ok) {
+                const data = await response.json();
+                setMessage(data.message || "Failed to download the file.");
+                return;
+            }
+    
+            // Extracting the blob and filename from the response
+            const blob = await response.blob();
+            const contentDisposition = response.headers.get('Content-Disposition');
+            const filename = contentDisposition ? contentDisposition.split('filename=')[1] : 'downloaded_file';
+    
+            // Create an anchor element and trigger download
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+    
+            setMessage("File downloaded successfully!");
+    
+        } catch (error) {
+            setMessage(`An error occurred: ${error}`);
+        }
     };
+    
 
     const handleFileSendBack = async (e) => {
         e.preventDefault();
@@ -15,7 +43,7 @@ function FileOperation() {
         const formData = new FormData();
         formData.append('file', selectedFile);
 
-        const response = await fetch("/api/sendback", {
+        const response = await fetch("http://localhost:3001/files/sendBackFile", {
             method: "POST",
             body: formData
         });

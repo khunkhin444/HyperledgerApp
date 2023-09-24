@@ -11,7 +11,7 @@ function Signin() {
         setLoading(true);
 
         try {
-            const response = await fetch("/api/signin", {
+            const response = await fetch("http://localhost:3001/auth/signin", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

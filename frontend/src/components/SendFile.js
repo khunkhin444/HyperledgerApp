@@ -19,7 +19,7 @@ function SendFile() {
         formData.append('recipient', recipient);
         formData.append('office', office);
 
-        const response = await fetch("/api/sendfile", {
+        const response = await fetch("http://localhost:3001/files/sendFile", {
             method: "POST",
             body: formData
         });

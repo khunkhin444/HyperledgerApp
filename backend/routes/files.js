@@ -17,7 +17,14 @@ router.post('/sendFile', upload.single('file'), async (req, res) => {
 
   try {
     await gateway.connect('./config/connection-profile.json', { wallet, identity: 'userId' });
-    // File sending logic here. Use Hyperledger Fabric SDK to send file to the blockchain.
+
+    const network = await gateway.getNetwork('mychannel');
+    const contract = network.getContract('mycontract');
+    const fileBuffer = req.file.buffer;
+    await contract.submitTransaction('sendFile', fileBuffer.toString('base64'));
+
+    res.status(200).json({ success: true, message: 'File sent successfully.' });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   } finally {
@@ -30,8 +37,15 @@ router.get('/downloadFile', async (req, res) => {
   const gateway = new Gateway();
 
   try {
-    await gateway.connect('./config/connection-profile.json', { wallet, identity: 'userId' });
+    // await gateway.connect('./config/connection-profile.json', { wallet, identity: 'userId' });
     // File download logic here. Retrieve file from the blockchain using Hyperledger Fabric SDK.
+    const network = await gateway.getNetwork('mychannel');
+    const contract = network.getContract('mycontract');
+    const result = await contract.evaluateTransaction('downloadFile', 'fileId');
+    const fileBuffer = Buffer.from(result, 'base64');
+
+    res.status(200).send(fileBuffer);
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   } finally {
@@ -45,7 +59,13 @@ router.post('/sendBackFile', upload.single('file'), async (req, res) => {
 
   try {
     await gateway.connect('./config/connection-profile.json', { wallet, identity: 'userId' });
-    // Logic to send back the received file.
+    const network = await gateway.getNetwork('mychannel');
+    const contract = network.getContract('mycontract');
+    const fileBuffer = req.file.buffer;
+    await contract.submitTransaction('sendBackFile', fileBuffer.toString('base64'));
+
+    res.status(200).json({ success: true, message: 'File sent back successfully.' });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   } finally {

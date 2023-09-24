@@ -5,6 +5,8 @@ const fileRoutes = require('./routes/files');
 const mydatabase = require('./db');  // Importing the CouchDB database instance
 const { Gateway, Wallets } = require('fabric-network');
 const fs = require('fs'); // Node.js file system module
+const cors = require("cors");
+app.use(cors());
 
 async function initializeFabricGateway() {
     const wallet = await Wallets.newFileSystemWallet('./wallet');
@@ -32,6 +34,11 @@ app.use('/files', (req, res, next) => {
     req.db = mydatabase;  // attach the db instance to the request object
     next();
 }, fileRoutes);
+
+app.post("/auth/signup", (req, res) => {
+    console.log("Signup API was hit");
+    // other code
+});
 
 const PORT = 3001;
 app.listen(PORT, () => {
