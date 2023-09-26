@@ -1,3 +1,5 @@
+//enrollAdmin.js: Enroll the admin user for the organization and import it into the wallet for the organization specified in the argument passed to the function.
+
 const { Wallets, Gateway } = require('fabric-network');
 const FabricCAServices = require('fabric-ca-client');
 

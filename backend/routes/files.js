@@ -1,3 +1,5 @@
+//files.js: File routes for the application
+
 const express = require('express');
 const multer = require('multer');
 const storage = multer.memoryStorage(); // Store the file in memory
