@@ -2,14 +2,18 @@ const express = require('express');
 const app = express();
 const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/files');
+const routeHandlers = require('./routes/routeHandlers');
 const mydatabase = require('./db'); // Importing the CouchDB database instance
 const { Gateway, Wallets } = require('fabric-network');
 const fs = require('fs'); // Node.js file system module
 const cors = require("cors");
-app.use(cors());
 
-let gateway;
-let contract;
+app.use(cors()); // Use CORS Middleware
+app.use(bodyParser.json()); // Middleware for JSON body parsing
+// app.use('/',routeHandlers); // Use the route handlers
+
+let gateway; // Gateway instance
+let contract; // Smart contract instance
 
 async function initializeFabricGateway() {
     const wallet = await Wallets.newFileSystemWallet('./wallet');
