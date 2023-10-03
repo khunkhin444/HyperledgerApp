@@ -18,7 +18,7 @@ const initializeFabricGateway = async () => {
     const wallet = await Wallets.newFileSystemWallet('./wallet');
     const gateway = new Gateway();
 
-    const connectionProfileJson = fs.readFileSync('./connection-profile.json', 'utf8');
+    const connectionProfileJson = fs.readFileSync('../connection-profile.json', 'utf8');
     const connectionProfile = JSON.parse(connectionProfileJson);
 
     await gateway.connect(connectionProfile, { wallet, identity: 'userId' });

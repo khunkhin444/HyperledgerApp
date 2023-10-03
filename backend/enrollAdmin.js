@@ -27,13 +27,11 @@ async function enrollAdmin(org, caInfo, mspId) {
 async function main() {
     try {
             // Enroll admin for Org1
-    
-            await enrollAdmin('Org1', { url: 'http://localhost:7054', caName: 'ca.org1.example.com' }, 'Org1MSP');
-
+            await enrollAdmin('Org1', { url: 'https://localhost:7054', caName: 'ca_org1' }, 'Org1MSP');
             // Enroll admin for Org2
-            await enrollAdmin('Org2', { url: 'http://localhost:8054', caName: 'ca.org2.example.com' }, 'Org2MSP');    
+            await enrollAdmin('Org2', { url: 'https://localhost:8054', caName: 'ca_org2' }, 'Org2MSP');    
             // Enroll admin for Orderer
-            await enrollAdmin('Orderer', { url: 'http://localhost:9054', caName: 'ca.orderer.example.com' }, 'OrdererMSP');
+            await enrollAdmin('Orderer', { url: 'https://localhost:9054', caName: 'ca_orderer' }, 'OrdererMSP');
             } catch (err) {
         console.error('Failed to enroll admin:', err);
         process.exit(1);

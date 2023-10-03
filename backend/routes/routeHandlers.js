@@ -1,3 +1,5 @@
+//routeHandler.js: Express route handlers for interacting with the blockchain
+
 const express = require('express');
 const router = express.Router();
 const couchdbOperations = require('../couchdbOperations'); // Adjust the path based on your directory structure
