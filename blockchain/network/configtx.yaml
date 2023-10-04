@@ -5,16 +5,46 @@ Organizations:
     Name: Org1MSP
     ID: Org1MSP
     MSPDir: crypto-config/peerOrganizations/office.example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('Org1MSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('Org1MSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('Org1MSP.admin')"
 
   - &Org2
     Name: Org2MSP
     ID: Org2MSP
     MSPDir: crypto-config/peerOrganizations/office.example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('Org2MSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('Org2MSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('Org2MSP.admin')"
 
   - &OrdererOrg
     Name: OrdererMSP
     ID: OrdererMSP
     MSPDir: crypto-config/ordererOrganizations/example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererMSP.admin')"
 
 Capabilities:
   Channel: &ChannelCapabilities
@@ -46,7 +76,6 @@ Channel: &ChannelDefaults
       Rule: "MAJORITY Admins"
 
 Profiles:
-
   OneOrgOrdererGenesis:
     Capabilities:
       <<: *ChannelCapabilities
@@ -95,3 +124,13 @@ Profiles:
         Organizations:
           - *Org1
           - *Org2
+        Policies:
+          Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+          Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+          Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
