@@ -18,7 +18,7 @@ services:
     links:
       - couchdb
     volumes:
-      - ./docker/peercfg:/etc/hyperledger/peercfg
+      - ./crypto-config/peerOrganizations/office.example.com/peers/peer0.office.example.com:/etc/hyperledger/peercfg
       - /var/run/docker.sock:/host/var/run/docker.sock
 
   peer0.org2.example.com:
@@ -31,14 +31,14 @@ services:
     links:
       - couchdb
     volumes:
-      - ./docker/peercfg:/etc/hyperledger/peercfg
+      - ./crypto-config/peerOrganizations/office.example.com/peers/peer1.office.example.com:/etc/hyperledger/peercfg
       - /var/run/docker.sock:/host/var/run/docker.sock
 
   cli:
     container_name: cli
     image: hyperledger/fabric-tools:latest
     volumes:
-      - ./docker/peercfg:/etc/hyperledger/peercfg
+      - ./crypto-config:/etc/hyperledger/peercfg
 
   ca.org1.example.com:
     container_name: ca_org1
@@ -49,13 +49,13 @@ services:
       - FABRIC_CA_SERVER_CA_ENROLLMENTID=admin
       - FABRIC_CA_SERVER_CA_ENROLLMENTPW=adminpw
       - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/priv_sk
     command: sh -c 'fabric-ca-server start -b admin:adminpw'
     ports:
       - 7054:7054
     volumes:
-      - ./path/to/ca-certs:/etc/hyperledger/fabric-ca-server-config
+      - ./crypto-config/ordererOrganizations/example.com/ca:/etc/hyperledger/fabric-ca-server-config
 
   ca.org2.example.com:
     container_name: ca_org2
@@ -66,13 +66,13 @@ services:
       - FABRIC_CA_SERVER_CA_ENROLLMENTID=admin
       - FABRIC_CA_SERVER_CA_ENROLLMENTPW=adminpw
       - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/priv_sk
     command: sh -c 'fabric-ca-server start -b admin:adminpw'
     ports:
       - 8054:8054
     volumes:
-      - ./path/to/ca-certs:/etc/hyperledger/fabric-ca-server-config
+      - ./crypto-config/ordererOrganizations/example.com/ca:/etc/hyperledger/fabric-ca-server-config
 
   ca.orderer.example.com:
     container_name: ca_orderer
@@ -83,13 +83,13 @@ services:
       - FABRIC_CA_SERVER_CA_ENROLLMENTID=admin
       - FABRIC_CA_SERVER_CA_ENROLLMENTPW=adminpw
       - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.orderer.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_ORDERER_PRIVATE_KEY
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/priv_sk
     command: sh -c 'fabric-ca-server start -b admin:adminpw'
     ports:
       - 9054:9054
     volumes:
-      - ./path/to/ca-certs:/etc/hyperledger/fabric-ca-server-config
+      - ./crypto-config/ordererOrganizations/example.com/ca:/etc/hyperledger/fabric-ca-server-config
 
 networks:
   fabric_test:

@@ -1,0 +1,97 @@
+---
+Organizations:
+
+  - &Org1
+    Name: Org1MSP
+    ID: Org1MSP
+    MSPDir: crypto-config/peerOrganizations/office.example.com/msp
+
+  - &Org2
+    Name: Org2MSP
+    ID: Org2MSP
+    MSPDir: crypto-config/peerOrganizations/office.example.com/msp
+
+  - &OrdererOrg
+    Name: OrdererMSP
+    ID: OrdererMSP
+    MSPDir: crypto-config/ordererOrganizations/example.com/msp
+
+Capabilities:
+  Channel: &ChannelCapabilities
+    V2_0: true
+
+  Orderer: &OrdererCapabilities
+    V2_0: true
+
+  Application: &ApplicationCapabilities
+    V2_0: true
+
+Application: &ApplicationDefaults
+  Organizations:
+
+Orderer: &OrdererDefaults
+  OrdererType: solo
+  Organizations:
+
+Channel: &ChannelDefaults
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+
+Profiles:
+
+  OneOrgOrdererGenesis:
+    Capabilities:
+      <<: *ChannelCapabilities
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+      Capabilities:
+        <<: *OrdererCapabilities
+    Consortiums:
+      SampleConsortium:
+        Organizations:
+          - *Org1
+          - *Org2
+
+  OneOrgChannel:
+    Consortium: SampleConsortium
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *Org1
+      Capabilities:
+        <<: *ApplicationCapabilities
+
+  TwoOrgsOrdererGenesis:
+    Capabilities:
+      <<: *ChannelCapabilities
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+      Capabilities:
+        <<: *OrdererCapabilities
+      Policies:
+        Readers:
+          Type: ImplicitMeta
+          Rule: "ANY Readers"
+        Writers:
+          Type: ImplicitMeta
+          Rule: "ANY Writers"
+        Admins:
+          Type: ImplicitMeta
+          Rule: "MAJORITY Admins"
+    Consortiums:
+      SampleConsortium:
+        Organizations:
+          - *Org1
+          - *Org2
