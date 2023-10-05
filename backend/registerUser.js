@@ -1,40 +1,64 @@
-//registerUser.js: This file is used to register a new user to the system.
-//It is called from the registerUser.html file.
+const { Wallets, Gateway, X509WalletMixin } = require('fabric-network');
+const FabricCAServices = require('fabric-ca-client');
 
-//This function is called when the user clicks the register button.
+async function registerUser(userId, org, caInfo, mspId) {
+    // Create a new file system based wallet for managing identities.
+    const walletPath = `./wallet-${org}`;
+    const wallet = await Wallets.newFileSystemWallet(walletPath);
 
-function registerUser() {
-    //Get the username and password from the form.
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
-    //Create a new XMLHttpRequest object.
-    var xhttp = new XMLHttpRequest();
-    //Set the callback function.
-    xhttp.onreadystatechange = function() {
-        //If the request is done and the response is ready.
-        if (this.readyState == 4 && this.status == 200) {
-            //Get the response text.
-            var response = this.responseText;
-            //If the response is 1.
-            if (response == 1) {
-                //Show the success message.
-                document.getElementById("success").style.display = "block";
-                //Hide the error message.
-                document.getElementById("error").style.display = "none";
-            }
-            //If the response is 0.
-            else if (response == 0) {
-                //Show the error message.
-                document.getElementById("error").style.display = "block";
-                //Hide the success message.
-                document.getElementById("success").style.display = "none";
-            }
-        }
+    // Check if the user is already enrolled
+    const userIdentity = await wallet.get(userId);
+    if (userIdentity) {
+        console.log(`An identity for the user ${userId} already exists in the wallet`);
+        return;
+    }
+
+    // Must use an admin identity to register a new user
+    const adminIdentity = await wallet.get('admin');
+    if (!adminIdentity) {
+        console.log('An identity for the admin user does not exist in the wallet');
+        console.log('Run the enrollAdmin.js application before retrying');
+        return;
+    }
+
+    // Connect to CA
+    const ca = new FabricCAServices(caInfo);
+    const provider = wallet.getProviderRegistry().getProvider(adminIdentity.type);
+    const adminUser = await provider.getUserContext(adminIdentity, 'admin');
+
+    // Register user
+    const secret = await ca.register({
+        affiliation: `${org}.department1`, // change this to suit your needs
+        enrollmentID: userId,
+        role: 'client'
+    }, adminUser);
+
+    // Enroll user
+    const enrollment = await ca.enroll({
+        enrollmentID: userId,
+        enrollmentSecret: secret
+    });
+
+    // Save user to wallet
+    const x509Identity = {
+        credentials: {
+            certificate: enrollment.certificate,
+            privateKey: enrollment.key.toBytes(),
+        },
+        mspId,
+        type: 'X.509',
     };
-    //Open the request.
-    xhttp.open("POST", "registerUser.php", true);
-    //Set the request header.
-    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    //Send the request.
-    xhttp.send("username=" + username + "&password=" + password);
+    await wallet.put(userId, x509Identity);
+    console.log(`Successfully registered and enrolled user ${userId} and imported it into the wallet`);
 }
+
+async function main() {
+    try {
+        await registerUser('newUser1', 'Org1', { url: 'http://localhost:7054', caName: 'ca_org1' }, 'Org1MSP');
+    } catch (error) {
+        console.error(`Failed to register user: ${error}`);
+        process.exit(1);
+    }
+}
+
+main();
