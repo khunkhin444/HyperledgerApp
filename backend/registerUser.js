@@ -53,6 +53,9 @@ async function registerUser(userId, org, caInfo, mspId) {
 
     } catch (error) {
         console.error(`Failed to register user ${userId}: ${error}`);
+        if (error.message.includes('Authorization failure')) {
+            console.error(`Make sure the user who is running the registerUser function has the necessary permissions to register a new user.`);
+        }
     }
 }
 
