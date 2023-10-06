@@ -18,7 +18,7 @@ services:
     links:
       - couchdb
     volumes:
-      - ./crypto-config/peerOrganizations/office.example.com/peers/peer0.office.example.com:/etc/hyperledger/peercfg
+      - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com:/etc/hyperledger/peercfg
       - /var/run/docker.sock:/host/var/run/docker.sock
 
   peer0.org2.example.com:
@@ -31,7 +31,7 @@ services:
     links:
       - couchdb
     volumes:
-      - ./crypto-config/peerOrganizations/office.example.com/peers/peer1.office.example.com:/etc/hyperledger/peercfg
+      - ./crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com:/etc/hyperledger/peercfg
       - /var/run/docker.sock:/host/var/run/docker.sock
 
   cli:
